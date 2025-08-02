@@ -1,0 +1,69 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35828.75
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9E20A804-4506-4D3E-861D-D555C37CCA8F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{48B7D771-A7D9-448E-82FC-2743BCF94B71}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{72CAD2E3-78B3-4F40-906C-B46BFABB495E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIYTVideoSummarizer.Domain", "AIYTVideoSummarizer.Domain\AIYTVideoSummarizer.Domain.csproj", "{D13CDC81-664F-4D30-9110-294461AE53F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIYTVideoSummarizer.Application", "AIYTVideoSummarizer.Application\AIYTVideoSummarizer.Application.csproj", "{156811F7-1268-4A10-AD9F-DEBC767066EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIYTVideoSummarizer.Infrastructure", "AIYTVideoSummarizer.Infrastructure\AIYTVideoSummarizer.Infrastructure.csproj", "{D06BC7CE-056C-444C-9FEB-9D194A9744E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIYTVideoSummarizer.Persistence", "AIYTVideoSummarizer.Persistence\AIYTVideoSummarizer.Persistence.csproj", "{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIYTVideoSummarizer.Api", "AIYTVideoSummarizer.Api\AIYTVideoSummarizer.Api.csproj", "{75648B03-1EC9-41C5-A537-398AFA9FE782}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D13CDC81-664F-4D30-9110-294461AE53F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D13CDC81-664F-4D30-9110-294461AE53F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D13CDC81-664F-4D30-9110-294461AE53F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D13CDC81-664F-4D30-9110-294461AE53F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156811F7-1268-4A10-AD9F-DEBC767066EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156811F7-1268-4A10-AD9F-DEBC767066EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156811F7-1268-4A10-AD9F-DEBC767066EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156811F7-1268-4A10-AD9F-DEBC767066EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D06BC7CE-056C-444C-9FEB-9D194A9744E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D06BC7CE-056C-444C-9FEB-9D194A9744E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D06BC7CE-056C-444C-9FEB-9D194A9744E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D06BC7CE-056C-444C-9FEB-9D194A9744E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75648B03-1EC9-41C5-A537-398AFA9FE782}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75648B03-1EC9-41C5-A537-398AFA9FE782}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75648B03-1EC9-41C5-A537-398AFA9FE782}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75648B03-1EC9-41C5-A537-398AFA9FE782}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D13CDC81-664F-4D30-9110-294461AE53F2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{156811F7-1268-4A10-AD9F-DEBC767066EA} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D06BC7CE-056C-444C-9FEB-9D194A9744E5} = {9E20A804-4506-4D3E-861D-D555C37CCA8F}
+		{6F7DAFE0-2EC9-4494-8B2D-D3F7C4C72232} = {9E20A804-4506-4D3E-861D-D555C37CCA8F}
+		{75648B03-1EC9-41C5-A537-398AFA9FE782} = {48B7D771-A7D9-448E-82FC-2743BCF94B71}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6ECAAF64-51E8-48D9-A658-6F9AEF10C7B0}
+	EndGlobalSection
+EndGlobal
