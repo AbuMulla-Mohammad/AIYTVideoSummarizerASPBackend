@@ -1,18 +1,14 @@
 ﻿using AIYTVideoSummarizer.Application.Commands.UserCommands;
+using AIYTVideoSummarizer.Application.DTOs.UserDtos;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
 using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Domain.Enums;
 using AutoMapper;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AIYTVideoSummarizer.Application.Handlers.UserHandlers
 {
-    public class CreateExternalUserCommandHandler : IRequestHandler<CreateExternalUserCommand>
+    public class CreateExternalUserCommandHandler : IRequestHandler<CreateExternalUserCommand, UserDto>
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -23,7 +19,7 @@ namespace AIYTVideoSummarizer.Application.Handlers.UserHandlers
             _mapper = mapper;
         }
 
-        public async Task Handle(CreateExternalUserCommand request, CancellationToken cancellationToken)
+        public async Task<UserDto> Handle(CreateExternalUserCommand request, CancellationToken cancellationToken)
         {
             var user = _mapper.Map<User>(request);
             user.Id = Guid.NewGuid();
@@ -39,6 +35,7 @@ namespace AIYTVideoSummarizer.Application.Handlers.UserHandlers
             });
 
             await _userRepository.AddAsync(user);
+            return _mapper.Map<UserDto>(user);
         }
     }
 }
