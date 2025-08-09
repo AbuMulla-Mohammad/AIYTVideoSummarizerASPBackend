@@ -13,7 +13,11 @@ namespace AIYTVideoSummarizer.Application.Profiles
         {
             CreateMap<Video, VideoDto>();
             CreateMap<Video, CreateVideoDto>();
+            CreateMap<Video, UpdateVideoDto>();
+            
             CreateMap<CreateVideoCommand, Video>();
+            CreateMap<UpdateVideoCommand, Video>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }
