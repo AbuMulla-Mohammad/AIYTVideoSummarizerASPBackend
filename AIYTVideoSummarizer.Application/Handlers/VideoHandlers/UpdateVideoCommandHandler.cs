@@ -28,8 +28,7 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
             _mapper.Map<UpdateVideoCommand, Video>(request, existingVideo);
             
             await _videoRepository.UpdateAsync(existingVideo);
-            return _mapper.Map < UpdateVideoDto > (existingVideo);
-            _mapper.Map<UpdateVideoDto,>
+            return _mapper.Map<UpdateVideoDto>(existingVideo);
         }
     }
 }

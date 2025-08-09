@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AIYTVideoSummarizer.Application.Commands.VideoCommands
 {
-    class UpdateVideoCommand:IRequest<UpdateVideoDto>
+    public class UpdateVideoCommand:IRequest<UpdateVideoDto>
     {
         public Guid Id { get; set; }
         public string? Title { get; set; }
