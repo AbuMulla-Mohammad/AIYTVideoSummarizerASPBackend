@@ -9,5 +9,6 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
 {
     public interface IVideoRepository:IGenericRepository<Video,Guid>
     {
+        Task<Video?> GetByYtIdAndPromptNameAsync(string videoYtId, string promptName);
     }
 }
