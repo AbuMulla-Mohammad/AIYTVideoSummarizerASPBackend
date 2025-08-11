@@ -17,7 +17,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
             CreateMap<Video, VideoSummaryResponseDto>()
                 .ForMember(dest => dest.SummarySections, opt => opt.MapFrom(src => src.Summaries.SelectMany(s => s.SummarySections)))
                 .ForMember(dest => dest.FormattedTranscripts, opt => opt.MapFrom(src => src.FormattedTranscripts));
-
+            CreateMap<Video, VideoDetailsDto>();
 
             CreateMap<CreateVideoCommand, Video>();
             CreateMap<UpdateVideoCommand, Video>()
