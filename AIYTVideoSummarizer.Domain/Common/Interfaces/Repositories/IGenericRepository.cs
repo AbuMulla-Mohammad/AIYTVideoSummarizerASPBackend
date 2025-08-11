@@ -9,7 +9,7 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
 {
     public interface IGenericRepository<TEntity, TKey> where TEntity : class
     {
-        Task<TEntity?> GetByIdAsync(TKey Id);
+        Task<TEntity?> GetByIdAsync(TKey Id, params Expression<Func<TEntity, object>>[] includes);
         Task<IEnumerable<TEntity>> GetAllAsync();
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression);
         Task<TEntity> AddAsync(TEntity entity);
