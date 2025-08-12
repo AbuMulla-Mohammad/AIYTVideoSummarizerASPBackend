@@ -11,5 +11,6 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
     {
         Task<IEnumerable<Summary>> GetByUserIdAsync(Guid userId);
         Task<IEnumerable<Summary>> GetByVideoIdAsync(Guid videoId);
+        Task<Summary?> GetByYtVideoIdAndPromptIdAsync(string ytId, Guid promptId);
     }
 }
