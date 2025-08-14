@@ -1,13 +1,15 @@
 ﻿
 using AIYTVideoSummarizer.Application.Commands.VideoCommands;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
 
 namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
 {
-    public class DeleteVideoCommandHandler : IRequestHandler<DeleteVideoCommand, VideoDto>
+    public class DeleteVideoCommandHandler : IRequestHandler<DeleteVideoCommand, Unit>
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
@@ -18,12 +20,13 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
             _mapper = mapper;
         }
 
-        public async Task<VideoDto> Handle(DeleteVideoCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteVideoCommand request, CancellationToken cancellationToken)
         {
 
-            var video = await _videoRepository.GetByIdAsync(request.Id) ?? throw new KeyNotFoundException($"Video with ID {request.Id} was not found.");
+            var video = await _videoRepository.GetByIdAsync(request.Id) 
+                ?? throw new NotFoundException(nameof(Video),request.Id);
             await _videoRepository.DeleteAsync(request.Id);
-            return _mapper.Map<VideoDto>(video);
+            return Unit.Value;
         }
     }
 }

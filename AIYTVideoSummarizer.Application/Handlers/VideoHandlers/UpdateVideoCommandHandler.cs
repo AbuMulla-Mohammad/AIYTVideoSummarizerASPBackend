@@ -1,5 +1,6 @@
 ﻿using AIYTVideoSummarizer.Application.Commands.VideoCommands;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
 using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
@@ -21,9 +22,8 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
 
         public async Task<UpdateVideoDto> Handle(UpdateVideoCommand request, CancellationToken cancellationToken)
         {
-            var existingVideo = await _videoRepository.GetByIdAsync(request.Id);
-            if (existingVideo == null) 
-                throw new KeyNotFoundException($"Video with Id {request.Id} not found.");
+            var existingVideo = await _videoRepository.GetByIdAsync(request.Id)
+                ?? throw new NotFoundException(nameof(Video), request.Id);
 
             _mapper.Map<UpdateVideoCommand, Video>(request, existingVideo);
             

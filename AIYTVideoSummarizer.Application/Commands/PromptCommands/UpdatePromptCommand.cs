@@ -3,7 +3,7 @@ using MediatR;
 
 namespace AIYTVideoSummarizer.Application.Commands.PromptCommands
 {
-    public class UpdatePromptCommand:IRequest<PromptDto?>
+    public class UpdatePromptCommand:IRequest<PromptDto>
     {
         public Guid Id { get; set; }
         public string? Name { get; set; } 
