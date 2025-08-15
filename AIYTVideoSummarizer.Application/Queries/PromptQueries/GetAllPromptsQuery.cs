@@ -1,0 +1,10 @@
+﻿
+using AIYTVideoSummarizer.Application.DTOs.PromptDtos;
+using MediatR;
+
+namespace AIYTVideoSummarizer.Application.Queries.PromptQueries
+{
+    public class GetAllPromptsQuery:IRequest<List<PromptListDto>>
+    {
+    }
+}
