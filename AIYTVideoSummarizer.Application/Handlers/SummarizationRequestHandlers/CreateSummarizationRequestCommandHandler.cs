@@ -67,7 +67,15 @@ namespace AIYTVideoSummarizer.Application.Handlers.SummarizationRequestHandlers
                 summaryEntity.VideoId = video.Id;
                 summaryEntity.PromptId = request.PromptId;
                 summaryEntity.UserId = request.UserId;
+                summaryEntity.SummarySections = summarizeResponse.SummarySections
+                    .Select(dto => _mapper.Map<SummarySection>(dto))
+                    .ToList();
                 await _summaryRepository.AddAsync(summaryEntity);
+
+                video.FormattedTranscripts = summarizeResponse.FormattedTranscripts
+                    .Select(dto => _mapper.Map<FormattedTranscript>(dto))
+                    .ToList();
+                await _videoRepository.UpdateAsync(video);
 
                 summarizationRequest.RequestStatus = RequestStatus.Completed;
             }
