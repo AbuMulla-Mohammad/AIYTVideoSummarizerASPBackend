@@ -11,6 +11,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
         {
             CreateMap<Prompt, PromptDto>();
             CreateMap<Prompt, PromptListDto>();
+            CreateMap<Prompt, PromptSummariesDto>();
             CreateMap<CreatePromptCommand, Prompt>();
         }
     }
