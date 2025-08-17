@@ -9,6 +9,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
     {
         public UserProfile()
         {
+            CreateMap<User, UserInfoDto>();
             CreateMap<CreateUserCommand, User>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.Password));
             CreateMap<CreateUserDto, CreateUserCommand>();
