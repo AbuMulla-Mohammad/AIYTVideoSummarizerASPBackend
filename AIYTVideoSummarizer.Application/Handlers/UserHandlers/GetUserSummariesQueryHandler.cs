@@ -24,9 +24,10 @@ namespace AIYTVideoSummarizer.Application.Handlers.UserHandlers
 
         public async Task<List<UserSummaryDto>> Handle(GetUserSummariesQuery request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByIdAsync(request.UserId, user => user.Summaries.OrderByDescending(s => s.CreatedAt))
+            var user = await _userRepository.GetByIdAsync(request.UserId, user => user.Summaries)
                 ?? throw new NotFoundException(nameof(User), request.UserId);
-            return _mapper.Map<List<UserSummaryDto>>(user.Summaries);
+            var orderedSummaries = user.Summaries.OrderByDescending(s => s.CreatedAt);
+            return _mapper.Map<List<UserSummaryDto>>(orderedSummaries);
         }
     }
 }
