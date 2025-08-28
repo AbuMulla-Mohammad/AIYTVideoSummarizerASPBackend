@@ -1,5 +1,6 @@
 
 using AIYTVideoSummarizer.Application;
+using AIYTVideoSummarizer.Persistence;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -16,6 +17,7 @@ namespace AIYTVideoSummarizer.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddApplication();
+            builder.Services.AddPersistence(builder.Configuration);
 
             var app = builder.Build();
 

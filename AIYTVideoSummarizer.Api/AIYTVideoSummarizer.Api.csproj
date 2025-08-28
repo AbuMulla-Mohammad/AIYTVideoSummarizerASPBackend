@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AIYTVideoSummarizer.Application\AIYTVideoSummarizer.Application.csproj" />
+    <ProjectReference Include="..\AIYTVideoSummarizer.Persistence\AIYTVideoSummarizer.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
