@@ -14,11 +14,11 @@ namespace AIYTVideoSummarizer.Domain.Entities
         public Guid VideoId { get; set; }
         public Video Video { get; set; } = null!;
 
-        public Guid PromptId { get; set; }
-        public Prompt Prompt { get; set; } = null!;
+        public Guid? PromptId { get; set; }
+        public Prompt? Prompt { get; set; } = null!;
 
-        public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
+        public Guid? UserId { get; set; }
+        public User? User { get; set; } = null!;
 
         public ICollection<SummarySection> SummarySections { get; set; } = new List<SummarySection>();
 
