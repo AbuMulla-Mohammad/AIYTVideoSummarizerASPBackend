@@ -51,7 +51,7 @@ namespace AIYTVideoSummarizer.Persistence.Configurations
             builder.HasMany(u => u.Summaries)
                 .WithOne(s => s.User)
                 .HasForeignKey(s => s.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasMany(u => u.SummarizationRequests)
                 .WithOne(sr => sr.User)
