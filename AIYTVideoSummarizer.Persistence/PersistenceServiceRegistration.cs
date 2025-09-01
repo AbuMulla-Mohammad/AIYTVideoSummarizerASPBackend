@@ -29,6 +29,8 @@ namespace AIYTVideoSummarizer.Persistence
             services.AddScoped<ISummarySectionRepository, SummarySectionRepository>();
             services.AddScoped<ISummaryRepository, SummaryRepository>();
             services.AddScoped<ISummarizationRequestRepository, SummarizationRequestRepository>();
+            services.AddScoped<IPromptRepository, PromptRepository>();
+            services.AddScoped<IFormattedTranscriptRepository, FormattedTranscriptRepository>();
             return services;
         }
     }
