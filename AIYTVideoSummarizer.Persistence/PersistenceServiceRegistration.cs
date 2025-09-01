@@ -1,5 +1,7 @@
 ﻿
+using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
 using AIYTVideoSummarizer.Persistence.Context;
+using AIYTVideoSummarizer.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +20,11 @@ namespace AIYTVideoSummarizer.Persistence
                     );
 
             });
+
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+
+            services.AddScoped<IVideoRepository, VideoRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
     }
