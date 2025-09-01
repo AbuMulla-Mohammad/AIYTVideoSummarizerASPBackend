@@ -25,6 +25,7 @@ namespace AIYTVideoSummarizer.Persistence
 
             services.AddScoped<IVideoRepository, VideoRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserExternalLoginRepository, UserExternalLoginRepository>();
             return services;
         }
     }
