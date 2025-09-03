@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
 {
-    public interface IFormattedTranscriptRepository:IGenericRepository<FormattedTranscript,Guid>
+    public interface IFormattedTranscriptRepository:IGenericRepository<FormattedTranscript,int>
     {
         Task<IEnumerable<FormattedTranscript>> GetByVideoIdAsync(Guid videoId);
     }
