@@ -1,6 +1,7 @@
 
 using AIYTVideoSummarizer.Application;
 using AIYTVideoSummarizer.Persistence;
+using AIYTVideoSummarizer.Infrastructure;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -18,6 +19,7 @@ namespace AIYTVideoSummarizer.Api
             builder.Services.AddSwaggerGen();
             builder.Services.AddApplication();
             builder.Services.AddPersistence(builder.Configuration);
+            builder.Services.AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 

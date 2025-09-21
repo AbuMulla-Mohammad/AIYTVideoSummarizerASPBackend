@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AIYTVideoSummarizer.Application\AIYTVideoSummarizer.Application.csproj" />
+    <ProjectReference Include="..\AIYTVideoSummarizer.Infrastructure\AIYTVideoSummarizer.Infrastructure.csproj" />
     <ProjectReference Include="..\AIYTVideoSummarizer.Persistence\AIYTVideoSummarizer.Persistence.csproj" />
   </ItemGroup>
 
