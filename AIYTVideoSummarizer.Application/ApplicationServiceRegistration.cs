@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace AIYTVideoSummarizer.Application
@@ -10,6 +12,11 @@ namespace AIYTVideoSummarizer.Application
             var assembly = Assembly.GetExecutingAssembly();
             services.AddMediatR(configuration=>configuration.RegisterServicesFromAssembly(assembly));
             services.AddAutoMapper(assembly);
+
+            services.AddValidatorsFromAssembly(assembly);
+            
+            services.AddTransient(typeof(IPipelineBehavior<,>),typeof(Behaviors.ValidationBehavior<,>));
+
             return services;
         }
     }
