@@ -2,6 +2,7 @@
 using AIYTVideoSummarizer.Application;
 using AIYTVideoSummarizer.Persistence;
 using AIYTVideoSummarizer.Infrastructure;
+using AIYTVideoSummarizer.Api.Middlewares;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -31,9 +32,10 @@ namespace AIYTVideoSummarizer.Api
             }
 
             app.UseHttpsRedirection();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseAuthorization();
-
+            
 
             app.MapControllers();
 
