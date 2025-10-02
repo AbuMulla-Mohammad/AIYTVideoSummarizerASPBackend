@@ -1,6 +1,7 @@
 ﻿
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Entities;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -25,7 +26,10 @@ namespace AIYTVideoSummarizer.Infrastructure.ExternalServices.AIService
         {
             var url = $"{_options.Value.BaseUrl}{_options.Value.GetVideoIdEndpoint}?url={videoUrl}";
             var response = await _httpClient.PostAsync(url,content:null);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidYouTubeUrlException("Invalid YouTube Url.");
+            }
 
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<Dictionary<string, string>>(content);
@@ -42,8 +46,16 @@ namespace AIYTVideoSummarizer.Infrastructure.ExternalServices.AIService
             };
             var json = JsonSerializer.Serialize(requestBody);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(url, content);
-            response.EnsureSuccessStatusCode();
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PostAsync(url, content);
+                response.EnsureSuccessStatusCode();
+
+            }catch(HttpRequestException)
+            {
+                throw new ExternalAIServiceException("The AI service is unavailable. Please try again later.");
+            }
 
             var responseJson = await response.Content.ReadAsStringAsync();
             var videoSummaryResponse = JsonSerializer.Deserialize<VideoSummaryResponseDto>(responseJson,
