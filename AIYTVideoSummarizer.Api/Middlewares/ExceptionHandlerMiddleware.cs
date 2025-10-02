@@ -50,6 +50,21 @@ namespace AIYTVideoSummarizer.Api.Middlewares
                         );
                     break;
 
+                case InvalidYouTubeUrlException invalidYouTubeUrlException:
+                    statusCode = HttpStatusCode.BadRequest;
+                    apiResponse = ApiResponse<string>.FailResponse(invalidYouTubeUrlException.Message);
+                    break;
+
+                case SummarizationFailedException summarizationFailedException:
+                    statusCode = HttpStatusCode.UnprocessableEntity;
+                    apiResponse = ApiResponse<string>.FailResponse(summarizationFailedException.Message);
+                    break;
+
+                case ExternalAIServiceException externalAIServiceException:
+                    statusCode = HttpStatusCode.ServiceUnavailable;
+                    apiResponse = ApiResponse<string>.FailResponse(externalAIServiceException.Message);
+                    break;
+
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     apiResponse = ApiResponse<string>.FailResponse("An unexpected error occurred.");
