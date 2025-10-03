@@ -35,6 +35,8 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
         {
             return await _context.Summaries
                 .Include(s => s.Video)
+                .ThenInclude(v=>v.FormattedTranscripts)
+                .Include(s=>s.SummarySections)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Video.YouTubeVideoID == ytId && s.PromptId == promptId);
         }

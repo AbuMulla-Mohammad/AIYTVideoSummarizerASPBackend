@@ -34,6 +34,7 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
         public async Task<Video?> GetByYtIdAsync(string videoYtId)
         {
             return await _context.Videos
+                .Include(v=>v.FormattedTranscripts)
                 .FirstOrDefaultAsync(v => v.YouTubeVideoID == videoYtId);
         }
     }
