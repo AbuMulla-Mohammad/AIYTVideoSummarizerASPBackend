@@ -23,6 +23,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
                 .ForMember(dest => dest.Video, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Prompt, opt => opt.Ignore())
                 .ForMember(dest => dest.User, opt => opt.Ignore());
+            CreateMap<SummarizationRequest, Summary>();
         }
     }
 }
