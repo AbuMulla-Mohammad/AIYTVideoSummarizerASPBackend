@@ -1,7 +1,9 @@
 ﻿
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Queries.VideoQueries;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
 
@@ -22,7 +24,8 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
 
         public async Task<List<VideoDto>?> Handle(GetSummarizedVideosByUserIdQuery request, CancellationToken cancellationToken)
         {
-            var videos = await _videoRepository.GetByUserId(request.UserId);
+            var videos = await _videoRepository.GetByUserId(request.UserId)
+                ?? throw new NotFoundException(nameof(User), request.UserId);
             if (videos is null)
                 return null;
             return _mapper.Map<List<VideoDto>>(videos);
