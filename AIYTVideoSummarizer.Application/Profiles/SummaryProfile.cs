@@ -14,10 +14,6 @@ namespace AIYTVideoSummarizer.Application.Profiles
             CreateMap<Summary, VideoSummaryResponseDto>()
                 .ForMember(dest => dest.SummarySections, opt => opt.MapFrom(src => src.SummarySections))
                 .ForMember(dest => dest.FormattedTranscripts, opt => opt.MapFrom(src => src.Video.FormattedTranscripts));
-            CreateMap<Summary, UserSummaryDto>()
-                .ForMember(dest => dest.VideoTitle, opt => opt.MapFrom(src => src.Video.Title))
-                .ForMember(dest => dest.PromptUsed, opt => opt.MapFrom(src => src.Prompt.Name))
-                .ForMember(dest => dest.SummarySectionsCount, opt => opt.MapFrom(src => src.SummarySections.Count));
             CreateMap<Summary, SummaryDto>()
                 .ForMember(dest => dest.VideoTitle, opt => opt.MapFrom(src => src.Video.Title))
                 .ForMember(dest => dest.PromptUsed, opt => opt.MapFrom(src => src.Prompt != null ? src.Prompt.Name : String.Empty))
