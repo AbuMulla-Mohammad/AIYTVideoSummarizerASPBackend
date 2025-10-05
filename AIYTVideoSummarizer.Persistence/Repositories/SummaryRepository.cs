@@ -3,6 +3,7 @@ using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
 using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AIYTVideoSummarizer.Persistence.Repositories
 {
@@ -15,17 +16,37 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Summary>> GetByUserIdAsync(Guid userId)
+        public async Task<IEnumerable<Summary>> GetByUserIdAsync(Guid userId, params Expression<Func<Summary, object>>[] includes)
         {
-            return await _context.Summaries
+            IQueryable<Summary> query = _context.Summaries;
+
+            if (includes is not null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query
+                        .Include(include);
+                }
+            }
+            return await query
                 .Where(s => s.UserId == userId)
                 .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Summary>> GetByVideoIdAsync(Guid videoId)
+        public async Task<IEnumerable<Summary>> GetByVideoIdAsync(Guid videoId, params Expression<Func<Summary, object>>[] includes)
         {
-            return await _context.Summaries
+            IQueryable<Summary> query = _context.Summaries;
+
+            if(includes is not null)
+            {
+                foreach(var include in includes)
+                {
+                    query = query
+                        .Include(include);
+                }
+            }
+            return await query
                 .Where(s => s.VideoId == videoId)
                 .AsNoTracking()
                 .ToListAsync();
@@ -39,6 +60,25 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                 .Include(s=>s.SummarySections)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(s => s.Video.YouTubeVideoID == ytId && s.PromptId == promptId);
+        }
+
+        public async Task<IEnumerable<Summary>> GetByPromptIdAsync(Guid promptId, params Expression<Func<Summary, object>>[] includes)
+        {
+            IQueryable<Summary> query= _context.Summaries;
+
+            if(includes is not null)
+            {
+                foreach(var include in includes)
+                {
+                    query = query
+                        .Include(include);
+                }
+            }
+
+            return await query
+                .Where(s => s.PromptId == promptId)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
