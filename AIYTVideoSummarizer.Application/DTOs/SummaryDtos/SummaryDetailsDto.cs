@@ -10,6 +10,9 @@ namespace AIYTVideoSummarizer.Application.DTOs.SummaryDtos
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public Guid PromptId { get; set; }
+        public string PromptName { get; set; } = string.Empty;
+
+        public string VideoTitle { get; set; } = string.Empty;
 
         public Guid UserId { get; set; }
 
