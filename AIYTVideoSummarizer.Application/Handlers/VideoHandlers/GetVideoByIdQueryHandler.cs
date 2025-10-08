@@ -9,7 +9,7 @@ using MediatR;
 
 namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
 {
-    public class GetVideoByIdQueryHandler : IRequestHandler<GetVideoByIdQuery, VideoDetailsDto?>
+    public class GetVideoByIdQueryHandler : IRequestHandler<GetVideoByIdQuery, VideoDetailsDto>
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
@@ -19,11 +19,10 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
             _videoRepository = videoRepository;
             _mapper = mapper;
         }
-        public async Task<VideoDetailsDto?> Handle(GetVideoByIdQuery request, CancellationToken cancellationToken)
+        public async Task<VideoDetailsDto> Handle(GetVideoByIdQuery request, CancellationToken cancellationToken)
         {
             var video = await _videoRepository.GetByIdAsync(request.VideoId,
                 v => v.Summaries,
-                v => v.Summaries.Select(s => s.SummarySections),
                 v => v.FormattedTranscripts
                 )
                 ?? throw new NotFoundException(nameof(Video), request.VideoId);
