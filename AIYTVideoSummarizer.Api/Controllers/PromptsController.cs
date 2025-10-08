@@ -42,16 +42,6 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<PromptDto>.SuccessResponse(result));
         }
 
-        [HttpGet("{id:guid}/summaries")]
-        public async Task<IActionResult> GetSummariesByPromptId([FromRoute] Guid id)
-        {
-            var query = new GetPromptSummariesQuery { Id = id };
-
-            var result = await _mediator.Send(query);
-
-            return Ok(ApiResponse<List<PromptSummariesDto>>.SuccessResponse(result));
-        }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreatePromptDto promptDto)
         {
