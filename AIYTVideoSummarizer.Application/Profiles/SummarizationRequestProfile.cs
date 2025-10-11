@@ -23,6 +23,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
                 .ForMember(dest => dest.VideoTitle, opt => opt.MapFrom(src => src.Video.Title))
                 .ForMember(dest => dest.RequestStatus, opt => opt.MapFrom(src => src.RequestStatus.ToString()));
             CreateMap<CreateSummarizationRequestCommand, SummarizationRequest>();
+            CreateMap<CreateSummarizationRequestDto, CreateSummarizationRequestCommand>();
         }
     }
 }

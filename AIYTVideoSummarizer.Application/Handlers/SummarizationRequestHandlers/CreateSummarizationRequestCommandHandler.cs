@@ -4,11 +4,13 @@ using AIYTVideoSummarizer.Application.DTOs.SummarySectionDtos;
 using AIYTVideoSummarizer.Application.DTOs.TranscriptDtos;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
 using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Domain.Enums;
 using AutoMapper;
 using MediatR;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace AIYTVideoSummarizer.Application.Handlers.SummarizationRequestHandlers
@@ -36,58 +38,101 @@ namespace AIYTVideoSummarizer.Application.Handlers.SummarizationRequestHandlers
         }
         public async Task<VideoSummaryResponseDto> Handle(CreateSummarizationRequestCommand request, CancellationToken cancellationToken)
         {
-            var ytId = await _aIService.GetYTVideoId(request.YouTubeUrl);
-            var existingSummary = await _summaryRepository.GetByYtVideoIdAndPromptIdAsync(ytId, request.PromptId);
-           
-            if (existingSummary is not null)
-            {
-                return _mapper.Map<VideoSummaryResponseDto>(existingSummary);
-
-            }
-            var video = await _videoRepository.GetByYtIdAsync(ytId);
-            if(video is null)
-            {
-                video = new Video
-                {
-                    YouTubeUrl = request.YouTubeUrl,
-                    YouTubeVideoID = ytId,
-                };
-                await _videoRepository.AddAsync(video);
-            }
-
             var summarizationRequest = _mapper.Map<SummarizationRequest>(request);
-            summarizationRequest.VideoId = video.Id;
-            summarizationRequest.RequestStatus = RequestStatus.Pending;
+            var ytId = await _aIService.GetYTVideoId(request.YouTubeUrl);
+
+            var video = await _videoRepository.GetByYtIdAsync(ytId);
+
+            if(video is not null)
+            {
+                var existingSummary = await _summaryRepository.GetByYtVideoIdAndPromptIdAsync(ytId, request.PromptId);
+                if (existingSummary is not null)
+                {
+
+                    return await ReturnExistingSummaryAsync(existingSummary, summarizationRequest, video.Id);
+
+                }
+                return await SummarizeVideoAsync(request, summarizationRequest, video);
+            }
+            video = await CreateNewVideo(request.YouTubeUrl, ytId);
+
+            return await SummarizeVideoAsync(request,summarizationRequest,video);
+
+        }
+
+        private async Task<VideoSummaryResponseDto> ReturnExistingSummaryAsync(
+            Summary existingSummary,
+            SummarizationRequest summarizationRequest,
+            Guid videoId)
+        {
+            summarizationRequest.RequestStatus = RequestStatus.Completed;
+            summarizationRequest.VideoId = videoId;
+
             await _summarizationRequestRepository.AddAsync(summarizationRequest);
-            VideoSummaryResponseDto summarizeResponse = new VideoSummaryResponseDto();
+
+            return new VideoSummaryResponseDto
+            {
+                SummarySections = _mapper.Map<List<SummarySectionDto>>(existingSummary.SummarySections),
+                FormattedTranscripts = _mapper.Map<List<FormattedTranscriptDto>>(existingSummary.Video.FormattedTranscripts),
+            };
+        }
+
+        private async Task<VideoSummaryResponseDto> SummarizeVideoAsync(
+            CreateSummarizationRequestCommand request,
+            SummarizationRequest summarizationRequest,
+            Video video)
+        {
             try
             {
-                 summarizeResponse = await _aIService.SummarizeVideo(request.YouTubeUrl, request.PromptId);
-                var summaryEntity = _mapper.Map<Summary>(summarizeResponse);
+                var summaryResponse = await _aIService.SummarizeVideo(request.YouTubeUrl, request.PromptId);
+
+                if (summaryResponse == null || summaryResponse.SummarySections == null || !summaryResponse.SummarySections.Any())
+                {
+                    throw new SummarizationFailedException("The AI service returned no meaningful summary. Please try again with another video or prompt.");
+                }
+
+                var summaryEntity = _mapper.Map<Summary>(summaryResponse);
+                _mapper.Map(summarizationRequest, summaryEntity);
                 summaryEntity.VideoId = video.Id;
-                summaryEntity.PromptId = request.PromptId;
-                summaryEntity.UserId = request.UserId;
-                summaryEntity.SummarySections = summarizeResponse.SummarySections
-                    .Select(dto => _mapper.Map<SummarySection>(dto))
-                    .ToList();
+
                 await _summaryRepository.AddAsync(summaryEntity);
 
-                video.FormattedTranscripts = summarizeResponse.FormattedTranscripts
-                    .Select(dto => _mapper.Map<FormattedTranscript>(dto))
-                    .ToList();
-                await _videoRepository.UpdateAsync(video);
+                if (!video.FormattedTranscripts.Any())
+                {
+                    video.FormattedTranscripts = summaryResponse.FormattedTranscripts
+                        .Select(dto => _mapper.Map<FormattedTranscript>(dto))
+                        .ToList();
+                    await _videoRepository.UpdateAsync(video);
+                }
 
+                summarizationRequest.VideoId = video.Id;
                 summarizationRequest.RequestStatus = RequestStatus.Completed;
+                await _summarizationRequestRepository.AddAsync(summarizationRequest);
+
+                return summaryResponse;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 summarizationRequest.RequestStatus = RequestStatus.Failed;
                 summarizationRequest.ErrorMessage = ex.Message;
+                await _summarizationRequestRepository.AddAsync(summarizationRequest);
+                throw;
             }
-            await _summarizationRequestRepository.UpdateAsync(summarizationRequest);
+        }
+        
+        private async Task<Video> CreateNewVideo(
+            string youTubeUrl,
+            string youTubeVideoId)
+        {
+            Video video = new Video
+            {
+                YouTubeUrl = youTubeUrl,
+                YouTubeVideoID = youTubeVideoId
+            };
 
-            return summarizeResponse;
+            await _videoRepository.AddAsync(video);
 
+            return video;
         }
     }
 }

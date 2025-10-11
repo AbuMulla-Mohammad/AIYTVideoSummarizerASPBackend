@@ -41,9 +41,19 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
         {
-            return await _dbSet
+            IQueryable<TEntity> query = _dbSet;
+
+            if(includes is not null)
+            {
+                foreach(var include in includes)
+                {
+                    query = query
+                        .Include(include);
+                }
+            }
+            return await query
                 .ToListAsync();
         }
 
