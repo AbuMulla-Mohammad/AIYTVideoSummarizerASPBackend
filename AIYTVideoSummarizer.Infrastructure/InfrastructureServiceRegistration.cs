@@ -36,6 +36,7 @@ namespace AIYTVideoSummarizer.Infrastructure
             });
 
             services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
+            services.AddScoped<IUserNameGenerator, UserNameGenerator>();
 
             return services;
 
