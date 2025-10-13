@@ -65,6 +65,10 @@ namespace AIYTVideoSummarizer.Api.Middlewares
                     apiResponse = ApiResponse<string>.FailResponse(externalAIServiceException.Message);
                     break;
 
+                case ConflictException conflictException:
+                    statusCode = HttpStatusCode.Conflict;
+                    apiResponse = ApiResponse<string>.FailResponse(conflictException.Message);
+                    break;
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     apiResponse = ApiResponse<string>.FailResponse("An unexpected error occurred.");
