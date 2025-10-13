@@ -1,5 +1,9 @@
-﻿using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+﻿using AIYTVideoSummarizer.Application.Interfaces.Common;
+using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+using AIYTVideoSummarizer.Application.Interfaces.Security;
 using AIYTVideoSummarizer.Infrastructure.ExternalServices.AIService;
+using AIYTVideoSummarizer.Infrastructure.Security;
+using AIYTVideoSummarizer.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,6 +34,9 @@ namespace AIYTVideoSummarizer.Infrastructure
                     }
                 }
             });
+
+            services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
+
             return services;
 
         }
