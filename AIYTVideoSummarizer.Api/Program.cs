@@ -3,6 +3,7 @@ using AIYTVideoSummarizer.Application;
 using AIYTVideoSummarizer.Persistence;
 using AIYTVideoSummarizer.Infrastructure;
 using AIYTVideoSummarizer.Api.Middlewares;
+using AIYTVideoSummarizer.Application.Common;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -21,6 +22,8 @@ namespace AIYTVideoSummarizer.Api
             builder.Services.AddApplication();
             builder.Services.AddPersistence(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.Configure<AppSettings>(
+                builder.Configuration.GetSection(AppSettings.AppSettingsSectionName));
 
             var app = builder.Build();
 
