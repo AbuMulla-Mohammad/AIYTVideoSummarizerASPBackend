@@ -1,4 +1,5 @@
-﻿using AIYTVideoSummarizer.Application.Commands.AuthenticationCommands;
+﻿using AIYTVideoSummarizer.Api.Common.Responses;
+using AIYTVideoSummarizer.Application.Commands.AuthenticationCommands;
 using AIYTVideoSummarizer.Application.DTOs.AuthenticationDtos;
 using AutoMapper;
 using MediatR;
@@ -31,6 +32,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
             var result = await _mediator.Send(command);
 
             return Created();
+        }
+
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+        {
+            var command = new VerifyEmailCommand { Token = token };
+
+            await _mediator.Send(command);
+
+            return Ok(ApiResponse<String>.SuccessResponse("Your email has been successfully verified."));
         }
     }
 }
