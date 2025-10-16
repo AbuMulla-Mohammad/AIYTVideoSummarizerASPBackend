@@ -40,9 +40,10 @@ namespace AIYTVideoSummarizer.Application.Handlers.AuthenticationHandlers
 
         public async Task<Unit> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            await EnsureUniqueUser(request.Email);
+            await EnsureUniqueUser(request.Email.Trim().ToLower());
 
             var user = _mapper.Map<User>(request);
+            user.Email = user.Email.Trim().ToLower();
             await PrepareUser(user, request.Password);
 
             await _userRepository.AddAsync(user);
@@ -92,7 +93,7 @@ namespace AIYTVideoSummarizer.Application.Handlers.AuthenticationHandlers
                 ? user.UserName
                 : user.FirstName;
 
-            var verificationLink = $"{_appSettings.ApiUrl}/verify-email?token={user.EmailConfirmationToken}";
+            var verificationLink = $"{_appSettings.ApiUrl}/api/account/verify-email?token={user.EmailConfirmationToken}";
 
             EmailMessage emailMessage = new EmailMessage()
             {
