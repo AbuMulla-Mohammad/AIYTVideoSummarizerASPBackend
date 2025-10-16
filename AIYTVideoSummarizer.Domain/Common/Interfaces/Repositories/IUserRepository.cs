@@ -12,5 +12,6 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
         Task<User?> GetByEmailAsync(string email);
         Task<User?> GetWithSummariesAsync(Guid userId);
         Task<User?> GetWithExternalLoginsAsync(Guid userId);
+        Task<User?> GetByEmailConfirmationTokenAsync(string token);
     }
 }
