@@ -4,6 +4,8 @@ using AIYTVideoSummarizer.Persistence;
 using AIYTVideoSummarizer.Infrastructure;
 using AIYTVideoSummarizer.Api.Middlewares;
 using AIYTVideoSummarizer.Application.Common;
+using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Infrastructure.Security;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -25,6 +27,9 @@ namespace AIYTVideoSummarizer.Api
             builder.Services.Configure<AppSettings>(
                 builder.Configuration.GetSection(AppSettings.AppSettingsSectionName));
 
+            var jwtOptions = builder.Configuration.GetSection("Authentication").Get<JwtOptions>();
+            builder.Services.AddAuthenticationServices(jwtOptions!);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -34,8 +39,9 @@ namespace AIYTVideoSummarizer.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
             

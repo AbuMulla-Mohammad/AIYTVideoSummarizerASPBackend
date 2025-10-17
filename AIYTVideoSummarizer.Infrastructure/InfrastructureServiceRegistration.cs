@@ -43,6 +43,9 @@ namespace AIYTVideoSummarizer.Infrastructure
 
             services.Configure<EmailConfiguration>(config.GetSection("EmailSettings"));
 
+            services.Configure<JwtOptions>(config.GetSection("Authentication"));
+            services.AddScoped<ITokenProvider, JwtTokenProvider>();
+
             return services;
 
         }
