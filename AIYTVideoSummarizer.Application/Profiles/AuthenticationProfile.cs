@@ -14,6 +14,7 @@ namespace AIYTVideoSummarizer.Application.Profiles
                 .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
 
             CreateMap<RegisterDto, RegisterCommand>();
+            CreateMap<LoginDto, LoginCommand>();
         }
     }
 }
