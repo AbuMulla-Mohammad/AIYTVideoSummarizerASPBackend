@@ -69,6 +69,12 @@ namespace AIYTVideoSummarizer.Api.Middlewares
                     statusCode = HttpStatusCode.Conflict;
                     apiResponse = ApiResponse<string>.FailResponse(conflictException.Message);
                     break;
+
+                case InvalidCredentialsException invalidCredentialsException:
+                    statusCode = HttpStatusCode.Unauthorized;
+                    apiResponse = ApiResponse<string>.FailResponse(invalidCredentialsException.Message);
+                    break;
+
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     apiResponse = ApiResponse<string>.FailResponse("An unexpected error occurred.");
