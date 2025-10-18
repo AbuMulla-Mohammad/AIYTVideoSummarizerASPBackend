@@ -3,6 +3,7 @@ using AIYTVideoSummarizer.Application.Commands.AuthenticationCommands;
 using AIYTVideoSummarizer.Application.DTOs.AuthenticationDtos;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -41,7 +42,18 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
             await _mediator.Send(command);
 
-            return Ok(ApiResponse<String>.SuccessResponse("Your email has been successfully verified."));
+            return Ok(ApiResponse<string>.SuccessResponse("Your email has been successfully verified."));
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            var command = _mapper.Map<LoginCommand>(loginDto);
+
+            var result = await _mediator.Send(command);
+
+            return Ok(ApiResponse<string>.SuccessResponse(result));
+        }
+
     }
 }
