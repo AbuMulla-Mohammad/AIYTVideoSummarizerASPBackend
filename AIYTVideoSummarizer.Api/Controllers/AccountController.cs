@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AIYTVideoSummarizer.Api.Controllers
@@ -55,5 +56,23 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<string>.SuccessResponse(result));
         }
 
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                ?? throw new UnauthorizedAccessException("User id claim missing.");
+
+            if (!Guid.TryParse(userIdClaim, out var userId))
+                throw new UnauthorizedAccessException("Invalid user id.");
+
+            var command = _mapper.Map<ChangePasswordCommand>(changePasswordDto);
+            command.UserId = userId;
+
+            await _mediator.Send(command);
+            
+            return Ok(ApiResponse<string>.SuccessResponse("Password changed successfully"));
+
+        }
     }
 }
