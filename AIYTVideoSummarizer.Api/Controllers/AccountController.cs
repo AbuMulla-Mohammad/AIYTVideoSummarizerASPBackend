@@ -74,5 +74,26 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<string>.SuccessResponse("Password changed successfully"));
 
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+        {
+            var command = _mapper.Map<ForgotPasswordCommand>(forgotPasswordDto);
+
+            await _mediator.Send(command);
+
+            return Ok(ApiResponse<string>.SuccessResponse("A password reset link has been sent to your email."));
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto, [FromQuery] string token)
+        {
+            var command = _mapper.Map<ResetPasswordCommand>(resetPasswordDto);
+            command.Token=token;
+
+            await _mediator.Send(command);
+
+            return Ok(ApiResponse<string>.SuccessResponse("Your password has been reset successfully"));
+        }
     }
 }
