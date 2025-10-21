@@ -28,7 +28,8 @@ namespace AIYTVideoSummarizer.Api
                 builder.Configuration.GetSection(AppSettings.AppSettingsSectionName));
 
             var jwtOptions = builder.Configuration.GetSection("Authentication").Get<JwtOptions>();
-            builder.Services.AddAuthenticationServices(jwtOptions!);
+            builder.Services.AddAuthenticationServices(jwtOptions!)
+                .AddAuthorizationPolicies();
 
             var app = builder.Build();
 

@@ -24,6 +24,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -56,6 +57,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {

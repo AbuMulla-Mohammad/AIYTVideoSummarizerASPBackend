@@ -30,6 +30,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -63,6 +64,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<SummarizationRequestDetailsDto>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("{status}")]
         public async Task<IActionResult> GetByStatus([FromRoute]RequestStatus status)
         {

@@ -26,6 +26,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -47,6 +48,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<SummaryDetailsDto>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("videoId/{id:guid}")]
         public async Task<IActionResult> GetByVideoId([FromRoute] Guid id)
         {
@@ -69,6 +71,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("promptId/{id:guid}")]
         public async Task<IActionResult> GetByPromptId([FromRoute] Guid id)
         {

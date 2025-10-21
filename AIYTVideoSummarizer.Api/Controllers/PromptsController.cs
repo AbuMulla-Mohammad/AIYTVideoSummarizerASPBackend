@@ -4,12 +4,14 @@ using AIYTVideoSummarizer.Application.DTOs.PromptDtos;
 using AIYTVideoSummarizer.Application.Queries.PromptQueries;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
     public class PromptsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -21,6 +23,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -31,6 +34,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<List<PromptListDto>>.SuccessResponse(result));
         }
 
+        [AllowAnonymous]
         [HttpGet("{id:guid}")]
 
         public async Task<IActionResult> GetById([FromRoute]Guid id)

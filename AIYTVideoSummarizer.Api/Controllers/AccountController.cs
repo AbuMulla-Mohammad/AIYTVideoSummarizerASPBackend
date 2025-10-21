@@ -1,4 +1,5 @@
-﻿using AIYTVideoSummarizer.Api.Common.Responses;
+﻿using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Api.Common.Responses;
 using AIYTVideoSummarizer.Application.Commands.AuthenticationCommands;
 using AIYTVideoSummarizer.Application.DTOs.AuthenticationDtos;
 using AutoMapper;
@@ -13,6 +14,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -31,7 +33,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
         {
             var command = _mapper.Map<RegisterCommand>(registerDto);
 
-            var result = await _mediator.Send(command);
+            await _mediator.Send(command);
 
             return Created();
         }
@@ -56,15 +58,11 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<string>.SuccessResponse(result));
         }
 
-        [HttpPost("change-password")]
         [Authorize]
+        [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                ?? throw new UnauthorizedAccessException("User id claim missing.");
-
-            if (!Guid.TryParse(userIdClaim, out var userId))
-                throw new UnauthorizedAccessException("Invalid user id.");
+            var userId = User.GetUserIdOrThrow();
 
             var command = _mapper.Map<ChangePasswordCommand>(changePasswordDto);
             command.UserId = userId;
