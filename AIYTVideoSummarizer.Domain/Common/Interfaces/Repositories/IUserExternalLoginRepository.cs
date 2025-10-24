@@ -9,6 +9,7 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
 {
     public interface IUserExternalLoginRepository:IGenericRepository<UserExternalLogin,Guid>
     {
+        Task<UserExternalLogin?> GetByProviderAsync(string providerName, string subject);
         Task<IEnumerable<UserExternalLogin>?> GetByUserIdAsync(Guid userId);
     }
 }
