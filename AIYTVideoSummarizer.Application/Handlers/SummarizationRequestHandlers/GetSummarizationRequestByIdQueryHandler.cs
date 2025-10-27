@@ -1,7 +1,9 @@
 ﻿
 using AIYTVideoSummarizer.Application.DTOs.SummarizationRequestDtos;
 using AIYTVideoSummarizer.Application.Queries.SummarizationRequestQueries;
+using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
 
@@ -20,7 +22,8 @@ namespace AIYTVideoSummarizer.Application.Handlers.SummarizationRequestHandlers
         }
         public async Task<SummarizationRequestDetailsDto> Handle(GetSummarizationRequestByIdQuery request, CancellationToken cancellationToken)
         {
-            var summarizationRequest = await _summarizationRequestRepository.GetByIdAsync(request.SummarizationRequestId, sr => sr.Prompt, sr => sr.Video);
+            var summarizationRequest = await _summarizationRequestRepository.GetByIdAsync(request.SummarizationRequestId, sr => sr.Prompt, sr => sr.Video)
+                ?? throw new NotFoundException(nameof(SummarizationRequest), request.SummarizationRequestId);
             return _mapper.Map<SummarizationRequestDetailsDto>(summarizationRequest);
         }
     }
