@@ -27,7 +27,7 @@ namespace AIYTVideoSummarizer.Application.Handlers.AuthenticationHandlers
 
         public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email)
+            var user = await _userRepository.GetByEmailAsync(request.Email.Trim().ToLower())
                 ?? throw new InvalidCredentialsException("Invalid email or password.");
 
             if (!user.IsEmailConfirmed)
