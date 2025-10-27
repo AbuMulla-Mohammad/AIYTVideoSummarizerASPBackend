@@ -35,7 +35,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
             await _mediator.Send(command);
 
-            return Created();
+            return Ok(ApiResponse<string>.SuccessResponse("User registered successfully. Please verify your email."));
         }
 
         [HttpGet("verify-email")]
@@ -52,6 +52,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var command = _mapper.Map<LoginCommand>(loginDto);
+
+            var result = await _mediator.Send(command);
+
+            return Ok(ApiResponse<string>.SuccessResponse(result));
+        }
+
+        [HttpPost("google-login")]
+        public async Task<IActionResult> GoogleLogin([FromBody] ExternalGoogleLoginDto externalGoogleLoginDto)
+        {
+            var command = _mapper.Map<ExternalGoogleLoginCommand>(externalGoogleLoginDto);
 
             var result = await _mediator.Send(command);
 
