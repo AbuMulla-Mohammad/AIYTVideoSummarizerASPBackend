@@ -1,15 +1,19 @@
-﻿using AIYTVideoSummarizer.Api.Common.Responses;
+﻿using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Api.Common.Responses;
 using AIYTVideoSummarizer.Application.DTOs.SummaryDtos;
 using AIYTVideoSummarizer.Application.Queries.SummaryQueries;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SummariesController : ControllerBase
     {
 
@@ -22,6 +26,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -31,8 +36,9 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
             return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
         }
-        [HttpGet("{id:guid}")]
 
+        [AllowAnonymous]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             var query = new GetSummaryByIdQuery { SummaryId = id };
@@ -42,6 +48,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<SummaryDetailsDto>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("videoId/{id:guid}")]
         public async Task<IActionResult> GetByVideoId([FromRoute] Guid id)
         {
@@ -52,16 +59,19 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
         }
 
-        [HttpGet("userId/{id:guid}")]
-        public async Task<IActionResult> GetByUserId([FromRoute] Guid id)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetByUserId()
         {
-            var query = new GetSummariesByUserIdQuery { UserId = id };
+            var userId = User.GetUserIdOrThrow();
+
+            var query = new GetSummariesByUserIdQuery { UserId = userId };
 
             var result = await _mediator.Send(query);
 
             return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("promptId/{id:guid}")]
         public async Task<IActionResult> GetByPromptId([FromRoute] Guid id)
         {

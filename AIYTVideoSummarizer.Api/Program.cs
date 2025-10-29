@@ -3,6 +3,10 @@ using AIYTVideoSummarizer.Application;
 using AIYTVideoSummarizer.Persistence;
 using AIYTVideoSummarizer.Infrastructure;
 using AIYTVideoSummarizer.Api.Middlewares;
+using AIYTVideoSummarizer.Application.Common;
+using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Infrastructure.Security;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AIYTVideoSummarizer.Api
 {
@@ -21,6 +25,14 @@ namespace AIYTVideoSummarizer.Api
             builder.Services.AddApplication();
             builder.Services.AddPersistence(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.Configure<AppSettings>(
+                builder.Configuration.GetSection(AppSettings.AppSettingsSectionName));
+            builder.Services.Configure<GoogleSettings>(
+                builder.Configuration.GetSection("Authentication:Google"));
+
+            var jwtOptions = builder.Configuration.GetSection("Authentication").Get<JwtOptions>();
+            builder.Services.AddAuthenticationServices(jwtOptions!)
+                .AddAuthorizationPolicies();
 
             var app = builder.Build();
 
@@ -31,8 +43,9 @@ namespace AIYTVideoSummarizer.Api
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
             app.UseMiddleware<ExceptionHandlerMiddleware>();
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
 
             app.UseAuthorization();
             

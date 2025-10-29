@@ -19,6 +19,25 @@ namespace AIYTVideoSummarizer.Persistence.Configurations
 
             builder.Property(u => u.PasswordHash)
                    .HasMaxLength(500);
+            
+            builder.Property(u => u.Salt)
+                .HasMaxLength(128);
+
+            builder.Property(u => u.IsEmailConfirmed)
+                .HasDefaultValue(false);
+
+            builder.Property(u => u.EmailConfirmationToken)
+                .HasMaxLength(256);
+
+            builder.Property(u => u.PasswordResetToken)
+                .HasMaxLength(256);
+
+            builder.Property(u => u.PasswordResetTokenExpiry)
+                .HasColumnType("timestamp with time zone");
+
+            builder.Property(u => u.CreatedAt)
+                .IsRequired()
+                .HasDefaultValueSql("NOW()");
 
             builder.Property(u => u.FirstName)
                 .HasMaxLength(100);

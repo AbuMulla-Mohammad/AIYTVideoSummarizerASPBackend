@@ -15,6 +15,13 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             _context = context;
         }
 
+        public async Task<UserExternalLogin?> GetByProviderAsync(string providerName, string subject)
+        {
+            return await _context.UserExternalLogins
+                 .Include(ex => ex.User)
+                 .FirstOrDefaultAsync(ex => ex.LoginProvider == providerName && ex.ProviderKey == subject);
+        }
+
         public async Task<IEnumerable<UserExternalLogin>?> GetByUserIdAsync(Guid userId)
         {
             return await _context.UserExternalLogins

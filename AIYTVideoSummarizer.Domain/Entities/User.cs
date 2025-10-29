@@ -13,6 +13,15 @@ namespace AIYTVideoSummarizer.Domain.Entities
         public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PasswordHash { get; set; }
+        public string? Salt { get; set; }
+
+        public bool IsEmailConfirmed { get; set; } = false;
+        public string? EmailConfirmationToken { get; set; }
+
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public string? FirstName { get; set; } 
         public string? LastName { get; set; }

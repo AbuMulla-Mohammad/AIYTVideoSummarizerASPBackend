@@ -21,6 +21,18 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                 .FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User?> GetByEmailConfirmationTokenAsync(string token)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.EmailConfirmationToken == token);
+        }
+
+        public async Task<User?> GetByPasswordResetTokenAsync(string token)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.PasswordResetToken == token && u.PasswordResetTokenExpiry > DateTime.UtcNow);
+        }
+
         public async Task<User?> GetWithExternalLoginsAsync(Guid userId)
         {
             return await _context.Users

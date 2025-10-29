@@ -1,4 +1,5 @@
-﻿using AIYTVideoSummarizer.Api.Common.Responses;
+﻿using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Api.Common.Responses;
 using AIYTVideoSummarizer.Application.Commands.SummarizationRequestCommands;
 using AIYTVideoSummarizer.Application.DTOs.SummarizationRequestDtos;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
@@ -6,13 +7,16 @@ using AIYTVideoSummarizer.Application.Queries.SummarizationRequestQueries;
 using AIYTVideoSummarizer.Domain.Enums;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SummarizationRequestsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -26,6 +30,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mapper = mapper;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -39,8 +44,10 @@ namespace AIYTVideoSummarizer.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateSummarizationRequestDto createSummarizationRequestDto)
         {
+            var userId = User.GetUserIdOrThrow();
+
             var command = _mapper.Map<CreateSummarizationRequestCommand>(createSummarizationRequestDto);
-            command.UserId = Guid.Parse("5b50ffa9-ba39-4c3a-810f-49e8a5e467be");
+            command.UserId = userId;
 
             var result = await _mediator.Send(command);
 
@@ -57,6 +64,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<SummarizationRequestDetailsDto>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("{status}")]
         public async Task<IActionResult> GetByStatus([FromRoute]RequestStatus status)
         {
@@ -67,10 +75,12 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result));
         }
 
-        [HttpGet("userId/{id:guid}")]
-        public async Task<IActionResult> GetByUserId([FromRoute] Guid id)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetByUserId()
         {
-            var query = new GetSummarizationRequestsByUserIdQuery { UserId = id };
+            var userId = User.GetUserIdOrThrow();
+
+            var query = new GetSummarizationRequestsByUserIdQuery { UserId = userId };
 
             var result = await _mediator.Send(query);
 

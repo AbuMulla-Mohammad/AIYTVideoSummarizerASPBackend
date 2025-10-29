@@ -1,5 +1,11 @@
-﻿using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+﻿using AIYTVideoSummarizer.Application.Interfaces.Common;
+using AIYTVideoSummarizer.Application.Interfaces.ExternalServices;
+using AIYTVideoSummarizer.Application.Interfaces.Security;
+using AIYTVideoSummarizer.Application.Models.Email;
 using AIYTVideoSummarizer.Infrastructure.ExternalServices.AIService;
+using AIYTVideoSummarizer.Infrastructure.Security;
+using AIYTVideoSummarizer.Infrastructure.Services;
+using AIYTVideoSummarizer.Infrastructure.Services.Email;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,6 +36,16 @@ namespace AIYTVideoSummarizer.Infrastructure
                     }
                 }
             });
+
+            services.AddSingleton<IPasswordHasher, Argon2PasswordHasher>();
+            services.AddScoped<IUserNameGenerator, UserNameGenerator>();
+            services.AddTransient<IEmailSender, SmtpEmailSender>();
+
+            services.Configure<EmailConfiguration>(config.GetSection("EmailSettings"));
+
+            services.Configure<JwtOptions>(config.GetSection("Authentication"));
+            services.AddScoped<ITokenProvider, JwtTokenProvider>();
+
             return services;
 
         }

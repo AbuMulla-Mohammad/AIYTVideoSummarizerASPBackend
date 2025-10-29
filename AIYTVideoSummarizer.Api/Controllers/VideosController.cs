@@ -1,16 +1,20 @@
-﻿using AIYTVideoSummarizer.Api.Common.Responses;
+﻿using AIYTVideoSummarizer.Api.Common.Extensions;
+using AIYTVideoSummarizer.Api.Common.Responses;
 using AIYTVideoSummarizer.Application.Commands.VideoCommands;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Queries.VideoQueries;
 using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VideosController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -20,6 +24,7 @@ namespace AIYTVideoSummarizer.Api.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -40,16 +45,19 @@ namespace AIYTVideoSummarizer.Api.Controllers
             return Ok(ApiResponse<VideoDetailsDto>.SuccessResponse(result));
         }
 
-        [HttpGet("userId/{id:guid}")]
-        public async Task<IActionResult> GetByUserId([FromRoute] Guid id)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetByUserId()
         {
-            var query = new GetSummarizedVideosByUserIdQuery { UserId = id };
+            var userId = User.GetUserIdOrThrow();
+
+            var query = new GetSummarizedVideosByUserIdQuery { UserId = userId };
 
             var result = await _mediator.Send(query);
 
             return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
         }
 
+        [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
