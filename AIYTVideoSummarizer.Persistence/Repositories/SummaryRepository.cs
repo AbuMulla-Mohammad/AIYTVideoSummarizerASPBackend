@@ -24,7 +24,7 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             Expression<Func<Summary, bool>>? filter = null,
             params Expression<Func<Summary, object>>[] includes)
         {
-            IQueryable<Summary> query = _context.Summaries;
+            IQueryable<Summary> query = _context.Summaries.AsNoTracking().Where(s => s.UserId == userId);
 
             if (includes is not null)
             {
@@ -58,9 +58,9 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             Expression<Func<Summary, bool>>? filter = null,
             params Expression<Func<Summary, object>>[] includes)
         {
-            IQueryable<Summary> query = _context.Summaries;
+            IQueryable<Summary> query = _context.Summaries.AsNoTracking().Where(s => s.VideoId == videoId);
 
-            if(includes is not null)
+            if (includes is not null)
             {
                 foreach(var include in includes)
                 {
@@ -102,9 +102,9 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             Expression<Func<Summary, bool>>? filter = null,
             params Expression<Func<Summary, object>>[] includes)
         {
-            IQueryable<Summary> query= _context.Summaries;
+            IQueryable<Summary> query= _context.Summaries.AsNoTracking().Where(s => s.PromptId == promptId);
 
-            if(includes is not null)
+            if (includes is not null)
             {
                 foreach(var include in includes)
                 {
@@ -119,7 +119,7 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                     .Where(filter);
             }
 
-            var totalItems = query.Count();
+            var totalItems = await query.CountAsync();
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
