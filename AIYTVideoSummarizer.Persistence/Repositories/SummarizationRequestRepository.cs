@@ -1,5 +1,6 @@
 ﻿
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
 using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Domain.Enums;
 using AIYTVideoSummarizer.Persistence.Context;
@@ -24,20 +25,45 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<SummarizationRequest>> GetByStatusAsync(RequestStatus status)
+        public async Task<PaginatedList<SummarizationRequest>> GetByStatusAsync(
+            int pageNumber,
+            int pageSize,
+            RequestStatus status)
         {
-            return await _context.SummarizationRequests
-                .Where(sr => sr.RequestStatus == status)
+            IQueryable<SummarizationRequest> query = _context.SummarizationRequests
                 .AsNoTracking()
+                .Where(s=>s.RequestStatus==status);
+
+            var totalItems = query.Count();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var pageData = new PageData(totalItems, pageSize, pageNumber);
+
+            return new PaginatedList<SummarizationRequest>(items, pageData);
         }
 
-        public async Task<IEnumerable<SummarizationRequest>> GetByUserIdAsync(Guid userId)
+        public async Task<PaginatedList<SummarizationRequest>> GetByUserIdAsync(
+            int pageNumber,
+            int pageSize,
+            Guid userId)
         {
-            return await _context.SummarizationRequests
-                .Where(sr => sr.UserId == userId)
-                .AsNoTracking()
+
+            IQueryable<SummarizationRequest> query = _context.SummarizationRequests
+                 .AsNoTracking()
+                 .Where(s => s.UserId == userId);
+
+            var totalItems = query.Count();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var pageData = new PageData(totalItems, pageSize, pageNumber);
+
+            return new PaginatedList<SummarizationRequest>(items, pageData);
         }
     }
 }

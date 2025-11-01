@@ -1,4 +1,5 @@
-﻿using AIYTVideoSummarizer.Domain.Entities;
+﻿using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
+using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -10,8 +11,14 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
 {
     public interface ISummarizationRequestRepository:IGenericRepository<SummarizationRequest,Guid>
     {
-        Task<IEnumerable<SummarizationRequest>> GetByUserIdAsync(Guid userId);
-        Task<IEnumerable<SummarizationRequest>> GetByStatusAsync(RequestStatus status);
+        Task<PaginatedList<SummarizationRequest>> GetByUserIdAsync(
+            int pageNumber,
+            int pageSize,
+            Guid userId);
+        Task<PaginatedList<SummarizationRequest>> GetByStatusAsync(
+            int pageNumber,
+            int pageSize,
+            RequestStatus status);
         Task<IEnumerable<SummarizationRequest>> GetByPromptIdAsync(Guid promptId);
     }
 }

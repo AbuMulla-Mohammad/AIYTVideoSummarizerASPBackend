@@ -71,25 +71,49 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("{status}")]
-        public async Task<IActionResult> GetByStatus([FromRoute]RequestStatus status)
+        public async Task<IActionResult> GetByStatus(
+            [FromRoute]RequestStatus status,
+            [FromQuery] string? SearchQuery,
+            [FromQuery] int PageSize = 10,
+            [FromQuery] int PageNumber = 1)
         {
-            var query = new GetSummarizationRequestsByStatusQuery { RequestStatus = status };
+            var query = new GetSummarizationRequestsByStatusQuery { 
+                RequestStatus = status,
+                PageNumber=PageNumber,
+                PageSize=PageSize
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result.Items));
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetByUserId()
+        public async Task<IActionResult> GetByUserId(
+            [FromQuery] int PageSize = 10,
+            [FromQuery] int PageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
-            var query = new GetSummarizationRequestsByUserIdQuery { UserId = userId };
+            var query = new GetSummarizationRequestsByUserIdQuery { 
+                UserId = userId,
+                PageNumber=PageNumber,
+                PageSize=PageSize
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result.Items));
         }
     }
 }
