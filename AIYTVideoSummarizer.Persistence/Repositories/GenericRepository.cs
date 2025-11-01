@@ -2,6 +2,7 @@
 
 using AIYTVideoSummarizer.Domain.Common.Exceptions;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
 using AIYTVideoSummarizer.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -41,7 +42,11 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includes)
+        public async Task<PaginatedList<TEntity>> GetAllAsync(
+            int pageNumber,
+            int pageSize,
+            Expression<Func<TEntity, bool>>? filter = null,
+            params Expression<Func<TEntity, object>>[] includes)
         {
             IQueryable<TEntity> query = _dbSet;
 
@@ -53,8 +58,23 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
                         .Include(include);
                 }
             }
-            return await query
+            
+            if(filter is not null)
+            {
+                query = query
+                        .Where(filter);
+
+            }
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var pageData = new PageData(totalItems, pageSize, pageNumber);
+
+            return new PaginatedList<TEntity>(items, pageData);
         }
 
         public async Task<TEntity?> GetByIdAsync(TKey Id, params Expression<Func<TEntity, object>>[] includes)
