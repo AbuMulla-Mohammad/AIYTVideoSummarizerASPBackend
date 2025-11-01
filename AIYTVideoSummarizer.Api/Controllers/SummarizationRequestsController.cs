@@ -73,7 +73,6 @@ namespace AIYTVideoSummarizer.Api.Controllers
         [HttpGet("{status}")]
         public async Task<IActionResult> GetByStatus(
             [FromRoute]RequestStatus status,
-            [FromQuery] string? SearchQuery,
             [FromQuery] int PageSize = 10,
             [FromQuery] int PageNumber = 1)
         {

@@ -1,8 +1,10 @@
 ﻿
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
 using AIYTVideoSummarizer.Domain.Entities;
 using AIYTVideoSummarizer.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AIYTVideoSummarizer.Persistence.Repositories
 {
@@ -15,11 +17,31 @@ namespace AIYTVideoSummarizer.Persistence.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Video>?> GetByUserId(Guid userId)
+        public async Task<PaginatedList<Video>?> GetByUserId(
+            int pageNumber,
+            int pageSize,
+            Guid userId,
+            Expression<Func<Video, bool>>? filter = null)
         {
-            return await _context.Videos
-                .Where(v => v.SummarizationRequest.Any(sr => sr.UserId == userId))
+            IQueryable<Video> query = _context.Videos
+                .AsNoTracking()
+                .Where(v => v.SummarizationRequest.Any(sr => sr.UserId == userId));
+
+            if(filter is not null)
+            {
+                query = query
+                    .Where(filter);
+            }
+
+            var totalItems = await query.CountAsync();
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            var pageData = new PageData(totalItems, pageSize, pageNumber);
+
+            return new PaginatedList<Video>(items, pageData);
         }
 
         public async Task<Video?> GetByYtIdAndPromptNameAsync(string videoYtId, string promptName)

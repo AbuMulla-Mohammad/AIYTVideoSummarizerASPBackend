@@ -50,15 +50,29 @@ namespace AIYTVideoSummarizer.Api.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetByUserId()
+        public async Task<IActionResult> GetByUserId(
+            [FromQuery] string? SearchQuery,
+            [FromQuery] int PageSize = 10,
+            [FromQuery] int PageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
-            var query = new GetSummarizedVideosByUserIdQuery { UserId = userId };
+            var query = new GetSummarizedVideosByUserIdQuery
+            {
+                UserId = userId,
+                PageNumber = PageNumber,
+                PageSize = PageSize,
+                SearchQuery = SearchQuery
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result.Items));
         }
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
