@@ -2,12 +2,15 @@
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Queries.VideoQueries;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
 {
-    public class GetAllVideosQueryHandler : IRequestHandler<GetAllVideosQuery, List<VideoDto>>
+    public class GetAllVideosQueryHandler : IRequestHandler<GetAllVideosQuery, PaginatedList<VideoDto>>
     {
         private readonly IVideoRepository _videoRepository;
         private readonly IMapper _mapper;
@@ -20,10 +23,22 @@ namespace AIYTVideoSummarizer.Application.Handlers.VideoHandlers
             _mapper = mapper;
         }
 
-        public async Task<List<VideoDto>> Handle(GetAllVideosQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<VideoDto>> Handle(GetAllVideosQuery request, CancellationToken cancellationToken)
         {
-            var videos = await _videoRepository.GetAllAsync();
-            return _mapper.Map<List<VideoDto>>(videos);
+            Expression<Func<Video, bool>>? filter = null;
+            if (!String.IsNullOrWhiteSpace(request.SearchQuery))
+            {
+                var searchQuery = request.SearchQuery.Trim();
+                filter = v => v.Title.Contains(searchQuery);
+            }
+            var videos = await _videoRepository.GetAllAsync(
+                request.PageNumber,
+                request.PageSize,
+                filter);
+
+            return new PaginatedList<VideoDto>(
+                _mapper.Map<List<VideoDto>>(videos.Items),
+                videos.PageData);
         }
     }
 }

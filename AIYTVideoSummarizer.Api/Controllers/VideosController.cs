@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
@@ -26,13 +27,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllVideosQuery getAllVideosQuery)
         {
-            var query = new GetAllVideosQuery();
+            var result = await _mediator.Send(getAllVideosQuery);
 
-            var result = await _mediator.Send(query);
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
 
-            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
+            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result.Items));
         }
 
         [HttpGet("{id:guid}")]

@@ -6,6 +6,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
@@ -25,13 +26,15 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllPromptsQuery getAllPromptsQuery)
         {
-            var query = new GetAllPromptsQuery();
+            var result = await _mediator.Send(getAllPromptsQuery);
 
-            var result = await _mediator.Send(query);
-
-            return Ok(ApiResponse<List<PromptListDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+            return Ok(ApiResponse<List<PromptListDto>>.SuccessResponse(result.Items));
         }
 
         [AllowAnonymous]

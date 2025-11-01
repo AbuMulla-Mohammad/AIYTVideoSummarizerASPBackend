@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace AIYTVideoSummarizer.Api.Controllers
@@ -24,13 +25,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy= "MustBeAdminOrSuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllUsersQuery getAllUsersQuery)
         {
-            var query = new GetAllUsersQuery();
+            var result = await _mediator.Send(getAllUsersQuery);
 
-            var result = await _mediator.Send(query);
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
 
-            return Ok(ApiResponse<List<UserInfoDto>>.SuccessResponse(result));
+            return Ok(ApiResponse<List<UserInfoDto>>.SuccessResponse(result.Items));
         }
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]

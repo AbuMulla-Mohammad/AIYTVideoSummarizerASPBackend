@@ -4,6 +4,7 @@ using AIYTVideoSummarizer.Application.Commands.SummarizationRequestCommands;
 using AIYTVideoSummarizer.Application.DTOs.SummarizationRequestDtos;
 using AIYTVideoSummarizer.Application.DTOs.VideoDtos;
 using AIYTVideoSummarizer.Application.Queries.SummarizationRequestQueries;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
 using AIYTVideoSummarizer.Domain.Enums;
 using AutoMapper;
 using MediatR;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
@@ -32,13 +34,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllSummarizationRequestsQuery getAllSummarizationRequestsQuery)
         {
-            var query = new GetAllSummarizationRequestsQuery();
+            var result = await _mediator.Send(getAllSummarizationRequestsQuery);
 
-            var result = await _mediator.Send(query);
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
 
-            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result));
+            return Ok(ApiResponse<List<SummarizationRequestDto>>.SuccessResponse(result.Items));
         }
 
         [HttpPost]

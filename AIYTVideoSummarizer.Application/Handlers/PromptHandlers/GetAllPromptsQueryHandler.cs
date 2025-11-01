@@ -2,12 +2,15 @@
 using AIYTVideoSummarizer.Application.DTOs.PromptDtos;
 using AIYTVideoSummarizer.Application.Queries.PromptQueries;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace AIYTVideoSummarizer.Application.Handlers.PromptHandlers
 {
-    public class GetAllPromptsQueryHandler : IRequestHandler<GetAllPromptsQuery, List<PromptListDto>>
+    public class GetAllPromptsQueryHandler : IRequestHandler<GetAllPromptsQuery, PaginatedList<PromptListDto>>
     {
         private readonly IPromptRepository _promptRepository;
         private readonly IMapper _mapper;
@@ -20,10 +23,26 @@ namespace AIYTVideoSummarizer.Application.Handlers.PromptHandlers
             _mapper = mapper;
         }
 
-        public async Task<List<PromptListDto>> Handle(GetAllPromptsQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<PromptListDto>> Handle(GetAllPromptsQuery request, CancellationToken cancellationToken)
         {
-            var prompts = await _promptRepository.GetAllAsync();
-            return _mapper.Map<List<PromptListDto>>(prompts);
+            Expression<Func<Prompt, bool>>? filter = null;
+
+            if (!String.IsNullOrWhiteSpace(request.SearchQuery))
+            {
+                var searchQuery = request.SearchQuery.Trim();
+                filter = p =>
+                p.Name.Contains(searchQuery) ||
+                p.Description.Contains(searchQuery);
+            }
+
+            var prompts = await _promptRepository.GetAllAsync(
+                request.PageNumber,
+                request.PageSize,
+                filter:filter);
+
+            return new PaginatedList<PromptListDto>( 
+                _mapper.Map<List<PromptListDto>>(prompts.Items),
+               prompts.PageData);
         }
     }
 }
