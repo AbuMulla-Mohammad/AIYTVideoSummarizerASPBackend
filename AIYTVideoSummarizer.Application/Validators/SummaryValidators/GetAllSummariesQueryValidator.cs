@@ -1,16 +1,12 @@
-﻿
-using AIYTVideoSummarizer.Application.Queries.SummaryQueries;
+﻿using AIYTVideoSummarizer.Application.Queries.SummaryQueries;
 using FluentValidation;
 
 namespace AIYTVideoSummarizer.Application.Validators.SummaryValidators
 {
-    public class GetSummariesByPromptIdQueryValidator : AbstractValidator<GetSummariesByPromptIdQuery>
+    public class GetAllSummariesQueryValidator : AbstractValidator<GetAllSummariesQuery>
     {
-        public GetSummariesByPromptIdQueryValidator()
+        public GetAllSummariesQueryValidator()
         {
-            RuleFor(s => s.PromptId)
-                .NotEmpty().WithMessage("Prompt Id must be provided.");
-
             RuleFor(x => x.PageNumber)
                .GreaterThan(0).WithMessage("Page number must be greater than 0.");
 

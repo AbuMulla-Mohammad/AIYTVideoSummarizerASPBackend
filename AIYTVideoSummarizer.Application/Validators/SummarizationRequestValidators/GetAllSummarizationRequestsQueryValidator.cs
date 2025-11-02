@@ -1,16 +1,12 @@
-﻿
-using AIYTVideoSummarizer.Application.Queries.SummarizationRequestQueries;
+﻿using AIYTVideoSummarizer.Application.Queries.SummarizationRequestQueries;
 using FluentValidation;
 
 namespace AIYTVideoSummarizer.Application.Validators.SummarizationRequestValidators
 {
-    public class GetSummarizationRequestsByStatusQueryValidator : AbstractValidator<GetSummarizationRequestsByStatusQuery>
+    public class GetAllSummarizationRequestsQueryValidator : AbstractValidator<GetAllSummarizationRequestsQuery>
     {
-        public GetSummarizationRequestsByStatusQueryValidator()
+        public GetAllSummarizationRequestsQueryValidator()
         {
-            RuleFor(sr => sr.RequestStatus)
-               .IsInEnum().WithMessage("Invalid request status.");
-
             RuleFor(x => x.PageNumber)
                .GreaterThan(0).WithMessage("Page number must be greater than 0.");
 

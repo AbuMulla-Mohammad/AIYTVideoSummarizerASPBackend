@@ -1,15 +1,12 @@
-﻿
-using AIYTVideoSummarizer.Application.Queries.VideoQueries;
+﻿using AIYTVideoSummarizer.Application.Queries.VideoQueries;
 using FluentValidation;
 
 namespace AIYTVideoSummarizer.Application.Validators.VideoValidators
 {
-    public class GetSummarizedVideosByUserIdQueryValidator : AbstractValidator<GetSummarizedVideosByUserIdQuery>
+    public class GetAllVideosQueryValidator : AbstractValidator<GetAllVideosQuery>
     {
-        public GetSummarizedVideosByUserIdQueryValidator()
+        public GetAllVideosQueryValidator()
         {
-            RuleFor(v => v.UserId)
-                .NotEmpty().WithMessage("User Id must be provided.");
             RuleFor(x => x.PageNumber)
                .GreaterThan(0).WithMessage("Page number must be greater than 0.");
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
@@ -26,13 +27,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllVideosQuery getAllVideosQuery)
         {
-            var query = new GetAllVideosQuery();
+            var result = await _mediator.Send(getAllVideosQuery);
 
-            var result = await _mediator.Send(query);
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
 
-            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
+            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result.Items));
         }
 
         [HttpGet("{id:guid}")]
@@ -46,15 +50,29 @@ namespace AIYTVideoSummarizer.Api.Controllers
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetByUserId()
+        public async Task<IActionResult> GetByUserId(
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
-            var query = new GetSummarizedVideosByUserIdQuery { UserId = userId };
+            var query = new GetSummarizedVideosByUserIdQuery
+            {
+                UserId = userId,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchQuery = searchQuery
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<VideoDto>>.SuccessResponse(result.Items));
         }
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]

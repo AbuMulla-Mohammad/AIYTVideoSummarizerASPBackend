@@ -1,7 +1,9 @@
-﻿using AIYTVideoSummarizer.Domain.Entities;
+﻿using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
+using AIYTVideoSummarizer.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,10 @@ namespace AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories
     {
         Task<Video?> GetByYtIdAndPromptNameAsync(string videoYtId, string promptName);
         Task<Video?> GetByYtIdAsync(string videoYtId);
-        Task<IEnumerable<Video>?> GetByUserId(Guid userId);
+        Task<PaginatedList<Video>?> GetByUserId(
+            int pageNumber,
+            int pageSize,
+            Guid userId,
+            Expression<Func<Video, bool>>? filter = null);
     }
 }

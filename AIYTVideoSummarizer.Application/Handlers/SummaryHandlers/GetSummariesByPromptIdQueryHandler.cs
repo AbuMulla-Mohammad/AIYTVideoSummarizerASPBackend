@@ -2,12 +2,15 @@
 using AIYTVideoSummarizer.Application.DTOs.SummaryDtos;
 using AIYTVideoSummarizer.Application.Queries.SummaryQueries;
 using AIYTVideoSummarizer.Domain.Common.Interfaces.Repositories;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
+using AIYTVideoSummarizer.Domain.Entities;
 using AutoMapper;
 using MediatR;
+using System.Linq.Expressions;
 
 namespace AIYTVideoSummarizer.Application.Handlers.SummaryHandlers
 {
-    public class GetSummariesByPromptIdQueryHandler : IRequestHandler<GetSummariesByPromptIdQuery, List<SummaryDto>>
+    public class GetSummariesByPromptIdQueryHandler : IRequestHandler<GetSummariesByPromptIdQuery, PaginatedList<SummaryDto>>
     {
         private readonly ISummaryRepository _summaryRepository;
         private readonly IMapper _mapper;
@@ -19,11 +22,20 @@ namespace AIYTVideoSummarizer.Application.Handlers.SummaryHandlers
             _summaryRepository = summaryRepository;
             _mapper = mapper;
         }
-        public async Task<List<SummaryDto>> Handle(GetSummariesByPromptIdQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<SummaryDto>> Handle(GetSummariesByPromptIdQuery request, CancellationToken cancellationToken)
         {
-            var summaries = await _summaryRepository.GetByPromptIdAsync(request.PromptId, s => s.Video, s => s.Prompt, s => s.SummarySections);
+            var summaries = await _summaryRepository.GetByPromptIdAsync(
+                request.PageNumber,
+                request.PageSize,
+                request.PromptId,
+                filter:null,
+                s => s.Video,
+                s => s.Prompt,
+                s => s.SummarySections);
 
-            return _mapper.Map<List<SummaryDto>>(summaries);
+            return new PaginatedList<SummaryDto>(
+                _mapper.Map<List<SummaryDto>>(summaries.Items),
+                summaries.PageData);
         }
     }
 }

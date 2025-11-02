@@ -2,12 +2,14 @@
 using AIYTVideoSummarizer.Api.Common.Responses;
 using AIYTVideoSummarizer.Application.DTOs.SummaryDtos;
 using AIYTVideoSummarizer.Application.Queries.SummaryQueries;
+using AIYTVideoSummarizer.Domain.Common.Models.PaginationModels;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace AIYTVideoSummarizer.Api.Controllers
 {
@@ -28,13 +30,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] GetAllSummariesQuery getAllSummariesQuery)
         {
-            var query = new GetAllSummariesQuery();
+            var result = await _mediator.Send(getAllSummariesQuery);
 
-            var result = await _mediator.Send(query);
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
 
-            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
+            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result.Items));
         }
 
         [AllowAnonymous]
@@ -50,36 +55,76 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("videoId/{id:guid}")]
-        public async Task<IActionResult> GetByVideoId([FromRoute] Guid id)
+        public async Task<IActionResult> GetByVideoId(
+            [FromRoute] Guid id,
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
-            var query = new GetSummariesByVideoIdQuery { VideoId = id };
+            var query = new GetSummariesByVideoIdQuery
+            {
+                VideoId = id,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                SearchQuery = searchQuery,
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result.Items));
         }
 
         [HttpGet("user")]
-        public async Task<IActionResult> GetByUserId()
+        public async Task<IActionResult> GetByUserId(
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
-            var query = new GetSummariesByUserIdQuery { UserId = userId };
+            var query = new GetSummariesByUserIdQuery {
+                UserId = userId,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                SearchQuery = searchQuery,
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result.Items));
         }
 
         [Authorize(Policy = "MustBeAdminOrSuperAdmin")]
         [HttpGet("promptId/{id:guid}")]
-        public async Task<IActionResult> GetByPromptId([FromRoute] Guid id)
+        public async Task<IActionResult> GetByPromptId
+            ([FromRoute] Guid id,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
-            var query = new GetSummariesByPromptIdQuery { PromptId = id };
+            var query = new GetSummariesByPromptIdQuery { 
+                PromptId = id,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
 
             var result = await _mediator.Send(query);
 
-            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result));
+            Response.Headers.Append(
+                "X-Pagination",
+                JsonSerializer.Serialize(result.PageData)
+            );
+
+            return Ok(ApiResponse<List<SummaryDto>>.SuccessResponse(result.Items));
         }
     }
 }
