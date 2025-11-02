@@ -51,18 +51,18 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [HttpGet("user")]
         public async Task<IActionResult> GetByUserId(
-            [FromQuery] string? SearchQuery,
-            [FromQuery] int PageSize = 10,
-            [FromQuery] int PageNumber = 1)
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
             var query = new GetSummarizedVideosByUserIdQuery
             {
                 UserId = userId,
-                PageNumber = PageNumber,
-                PageSize = PageSize,
-                SearchQuery = SearchQuery
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                SearchQuery = searchQuery
             };
 
             var result = await _mediator.Send(query);

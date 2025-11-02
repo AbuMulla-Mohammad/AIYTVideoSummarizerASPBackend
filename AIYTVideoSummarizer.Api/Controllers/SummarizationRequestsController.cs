@@ -73,13 +73,14 @@ namespace AIYTVideoSummarizer.Api.Controllers
         [HttpGet("{status}")]
         public async Task<IActionResult> GetByStatus(
             [FromRoute]RequestStatus status,
-            [FromQuery] int PageSize = 10,
-            [FromQuery] int PageNumber = 1)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
-            var query = new GetSummarizationRequestsByStatusQuery { 
+            var query = new GetSummarizationRequestsByStatusQuery
+            {
                 RequestStatus = status,
-                PageNumber=PageNumber,
-                PageSize=PageSize
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
 
             var result = await _mediator.Send(query);
@@ -94,15 +95,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [HttpGet("user")]
         public async Task<IActionResult> GetByUserId(
-            [FromQuery] int PageSize = 10,
-            [FromQuery] int PageNumber = 1)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
-            var query = new GetSummarizationRequestsByUserIdQuery { 
+            var query = new GetSummarizationRequestsByUserIdQuery
+            {
                 UserId = userId,
-                PageNumber=PageNumber,
-                PageSize=PageSize
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
 
             var result = await _mediator.Send(query);

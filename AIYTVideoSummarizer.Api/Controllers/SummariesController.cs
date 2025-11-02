@@ -57,15 +57,16 @@ namespace AIYTVideoSummarizer.Api.Controllers
         [HttpGet("videoId/{id:guid}")]
         public async Task<IActionResult> GetByVideoId(
             [FromRoute] Guid id,
-            [FromQuery] string? SearchQuery,
-            [FromQuery] int PageSize=10,
-            [FromQuery] int PageNumber=1)
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
-            var query = new GetSummariesByVideoIdQuery { 
+            var query = new GetSummariesByVideoIdQuery
+            {
                 VideoId = id,
-                PageSize=PageSize,
-                PageNumber=PageNumber,
-                SearchQuery=SearchQuery,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                SearchQuery = searchQuery,
             };
 
             var result = await _mediator.Send(query);
@@ -80,17 +81,17 @@ namespace AIYTVideoSummarizer.Api.Controllers
 
         [HttpGet("user")]
         public async Task<IActionResult> GetByUserId(
-            [FromQuery] string? SearchQuery,
-            [FromQuery] int PageSize=10,
-            [FromQuery] int PageNumber=1)
+            [FromQuery] string? searchQuery,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var userId = User.GetUserIdOrThrow();
 
             var query = new GetSummariesByUserIdQuery {
                 UserId = userId,
-                PageSize = PageSize,
-                PageNumber = PageNumber,
-                SearchQuery = SearchQuery,
+                PageSize = pageSize,
+                PageNumber = pageNumber,
+                SearchQuery = searchQuery,
             };
 
             var result = await _mediator.Send(query);
@@ -107,13 +108,13 @@ namespace AIYTVideoSummarizer.Api.Controllers
         [HttpGet("promptId/{id:guid}")]
         public async Task<IActionResult> GetByPromptId
             ([FromRoute] Guid id,
-            [FromQuery] int PageSize=10,
-            [FromQuery] int PageNumber=1)
+            [FromQuery] int pageSize = 10,
+            [FromQuery] int pageNumber = 1)
         {
             var query = new GetSummariesByPromptIdQuery { 
                 PromptId = id,
-                PageNumber=PageNumber,
-                PageSize=PageSize
+                PageNumber = pageNumber,
+                PageSize = pageSize
             };
 
             var result = await _mediator.Send(query);
